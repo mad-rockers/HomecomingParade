@@ -31,8 +31,12 @@ void Robot::RobotInit() {
   r_right_pid.SetD(0);
   r_right_pid.SetFF(0);
 
-  r_arm_pid.SetP(0.07); /* I believe that lowering this value will slow down the movement of the arm */
-  r_arm_pid.SetI(0);
+  /*
+  This variable controls the proportional speed to the SetPoint.  The higher the value
+  the less it will slow down as it approaches the SetPoint
+  */
+  r_arm_pid.SetP(0.07); r_arm_pid.SetI(0);
+
   r_arm_pid.SetD(0);
   r_arm_pid.SetFF(0);
 
@@ -194,7 +198,8 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
-  drivetrain();
+  //Turning this off, so it doesn't accidently drive off of truck
+  //drivetrain();
   arm();
   extension();
   box();
@@ -205,6 +210,11 @@ void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {}
 
+/*
+This is the code that runs when Test is selected and Enable is clicked.
+This moves the arm and extension, and it uses the electronic switches to identify 0
+Then it moves the arm end extension to a safe position
+*/
 void Robot::TestInit() {
   stop_all();
   while(r_extension_limit_back.Get() == 0) {
@@ -232,7 +242,7 @@ void Robot::TestInit() {
   r_arm.Set(0);
   r_arm_encoder.SetPosition(0);
   r_arm_pid.SetReference(-2, ControlType::kPosition);
-  r_extension_pid.SetReference(-45, ControlType::kPosition);
+  r_extension_pid.SetReference(-10, ControlType::kPosition);
 }
 
 void Robot::TestPeriodic() {}
